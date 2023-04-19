@@ -1,13 +1,14 @@
 class Epics::Client
   extend Forwardable
 
-  attr_accessor :passphrase, :url, :host_id, :user_id, :partner_id, :keys, :keys_content
+  attr_accessor :passphrase, :url, :host_id, :user_id, :partner_id, :keys, :keys_content, :keys_certs
   attr_writer :iban, :bic, :name
 
   def_delegators :connection, :post
 
   def initialize(keys_content, passphrase, url, host_id, user_id, partner_id)
     self.keys_content = keys_content.respond_to?(:read) ? keys_content.read : keys_content if keys_content
+    self.keys_certs = JSON.parse(self.keys_content) if keys_content
     self.passphrase = passphrase
     self.keys = extract_keys if keys_content
     self.url  = url
@@ -17,22 +18,22 @@ class Epics::Client
   end
 
   def inspect
-    "#<#{self.class}:#{self.object_id}
-     @keys=#{self.keys.keys},
-     @user_id=\"#{self.user_id}\",
-     @partner_id=\"#{self.partner_id}\""
+    "#<#{self.class}:#{object_id}
+     @keys=#{keys.keys},
+     @user_id=\"#{user_id}\",
+     @partner_id=\"#{partner_id}\""
   end
 
   def e
-    keys["E002"]
+    keys['E002']
   end
 
   def a
-    keys["A006"]
+    keys['A006']
   end
 
   def x
-    keys["X002"]
+    keys['X002']
   end
 
   def bank_e
@@ -44,25 +45,37 @@ class Epics::Client
   end
 
   def name
-    @name ||= (self.HTD; @name)
+    @name ||= begin
+      self.HTD
+      @name
+    end
   end
 
   def iban
-    @iban ||= (self.HTD; @iban)
+    @iban ||= begin
+      self.HTD
+      @iban
+    end
   end
 
   def bic
-    @bic ||= (self.HTD; @bic)
+    @bic ||= begin
+      self.HTD
+      @bic
+    end
   end
 
   def order_types
-    @order_types ||= (self.HTD; @order_types)
+    @order_types ||= begin
+      self.HTD
+      @order_types
+    end
   end
 
   def self.setup(passphrase, url, host_id, user_id, partner_id, keysize = 2048)
     client = new(nil, passphrase, url, host_id, user_id, partner_id)
-    client.keys = %w(A006 X002 E002).each_with_object({}) do |type, memo|
-      memo[type] = Epics::Key.new( OpenSSL::PKey::RSA.generate(keysize) )
+    client.keys = %w[A006 X002 E002].each_with_object({}) do |type, memo|
+      memo[type] = Epics::Key.new(OpenSSL::PKey::RSA.generate(keysize))
     end
 
     client
@@ -83,11 +96,11 @@ class Epics::Client
   end
 
   def debit(document, type = :CDD)
-    self.public_send(type, document)
+    public_send(type, document)
   end
 
   def statements(from, to, type = :STA)
-    self.public_send(type, from, to)
+    public_send(type, from, to)
   end
 
   def HIA
@@ -99,7 +112,7 @@ class Epics::Client
   end
 
   def HPB
-    Nokogiri::XML(download(Epics::HPB)).xpath("//xmlns:PubKeyValue", xmlns: "urn:org:ebics:H004").each do |node|
+    Nokogiri::XML(download(Epics::HPB)).xpath('//xmlns:PubKeyValue', xmlns: 'urn:org:ebics:H004').each do |node|
       type = node.parent.last_element_child.content
 
       modulus  = Base64.decode64(node.at_xpath(".//*[local-name() = 'Modulus']").content)
@@ -111,7 +124,7 @@ class Epics::Client
 
       bank = OpenSSL::PKey::RSA.new(OpenSSL::ASN1::Sequence(sequence).to_der)
 
-      self.keys["#{host_id.upcase}.#{type}"] = Epics::Key.new(bank)
+      keys["#{host_id.upcase}.#{type}"] = Epics::Key.new(bank)
     end
 
     [bank_x, bank_e]
@@ -181,16 +194,36 @@ class Epics::Client
     download_and_unzip(Epics::C54, from, to)
   end
 
+  def FDL(format)
+    download(Epics::FDL, format)
+  end
+
   def HAA
-    Nokogiri::XML(download(Epics::HAA)).at_xpath("//xmlns:OrderTypes", xmlns: "urn:org:ebics:H004").content.split(/\s/)
+    Nokogiri::XML(download(Epics::HAA)).at_xpath('//xmlns:OrderTypes', xmlns: 'urn:org:ebics:H004').content.split(/\s/)
   end
 
   def HTD
     Nokogiri::XML(download(Epics::HTD)).tap do |htd|
-      @iban        ||= htd.at_xpath("//xmlns:AccountNumber[@international='true']", xmlns: "urn:org:ebics:H004").text rescue nil
-      @bic         ||= htd.at_xpath("//xmlns:BankCode[@international='true']", xmlns: "urn:org:ebics:H004").text rescue nil
-      @name        ||= htd.at_xpath("//xmlns:Name", xmlns: "urn:org:ebics:H004").text rescue nil
-      @order_types ||= htd.search("//xmlns:OrderTypes", xmlns: "urn:org:ebics:H004").map{|o| o.content.split(/\s/) }.delete_if{|o| o == ""}.flatten
+      @iban ||= begin
+        htd.at_xpath("//xmlns:AccountNumber[@international='true']",
+                     xmlns: 'urn:org:ebics:H004').text
+      rescue StandardError
+        nil
+      end
+      @bic ||= begin
+        htd.at_xpath("//xmlns:BankCode[@international='true']",
+                     xmlns: 'urn:org:ebics:H004').text
+      rescue StandardError
+        nil
+      end
+      @name ||= begin
+        htd.at_xpath('//xmlns:Name', xmlns: 'urn:org:ebics:H004').text
+      rescue StandardError
+        nil
+      end
+      @order_types ||= htd.search('//xmlns:OrderTypes', xmlns: 'urn:org:ebics:H004').map do |o|
+                         o.content.split(/\s/)
+                       end.delete_if { |o| o == '' }.flatten
     end.to_xml
   end
 
@@ -214,6 +247,10 @@ class Epics::Client
     File.write(path, dump_keys)
   end
 
+  def dump_keys
+    JSON.dump(keys.each_with_object({}) { |(k, v), m| m[k] = encrypt(v.key.to_pem) })
+  end
+
   private
 
   def upload(order_type, document)
@@ -225,7 +262,7 @@ class Epics::Client
 
     res = post(url, order.to_transfer_xml).body
 
-    return res.transaction_id, [res.order_id, order_id].detect { |id| id.to_s.chars.any? }
+    [res.transaction_id, [res.order_id, order_id].detect { |id| id.to_s.chars.any? }]
   end
 
   def download(order_type, *args)
@@ -233,9 +270,7 @@ class Epics::Client
     res = post(url, document.to_xml).body
     document.transaction_id = res.transaction_id
 
-    if res.segmented? && res.last_segment?
-      post(url, document.to_receipt_xml).body
-    end
+    post(url, document.to_receipt_xml).body if res.segmented? && res.last_segment?
 
     res.order_data
   end
@@ -249,22 +284,19 @@ class Epics::Client
   end
 
   def connection
-    @connection ||= Faraday.new(headers: { 'Content-Type' => 'text/xml', user_agent: "EPICS v#{Epics::VERSION}"}, ssl: { verify: verify_ssl? }) do |faraday|
+    @connection ||= Faraday.new(headers: { 'Content-Type' => 'text/xml', user_agent: 'EBICS Pennylane Test' },
+                                ssl: { verify: verify_ssl? }) do |faraday|
       faraday.use Epics::XMLSIG, { client: self }
-      faraday.use Epics::ParseEbics, { client: self}
+      faraday.use Epics::ParseEbics, { client: self }
       # faraday.use MyAdapter
-      # faraday.response :logger                  # log requests to STDOUT
+      faraday.response :logger, nil, { bodies: true, log_level: :debug } # log requests to STDOUT
     end
   end
 
   def extract_keys
-    JSON.load(self.keys_content).each_with_object({}) do |(type, key), memo|
+    JSON.load(keys_content).each_with_object({}) do |(type, key), memo|
       memo[type] = Epics::Key.new(decrypt(key)) if key
     end
-  end
-
-  def dump_keys
-    JSON.dump(keys.each_with_object({}) {|(k,v),m| m[k]= encrypt(v.key.to_pem)})
   end
 
   def new_cipher
@@ -276,7 +308,7 @@ class Epics::Client
   def encrypt(data)
     salt = OpenSSL::Random.random_bytes(8)
 
-    cipher = setup_cipher(:encrypt, self.passphrase, salt)
+    cipher = setup_cipher(:encrypt, passphrase, salt)
     Base64.strict_encode64([salt, cipher.update(data) + cipher.final].join)
   end
 
@@ -285,7 +317,7 @@ class Epics::Client
     salt = data[0..7]
     data = data[8..-1]
 
-    cipher = setup_cipher(:decrypt, self.passphrase, salt)
+    cipher = setup_cipher(:decrypt, passphrase, salt)
     cipher.update(data) + cipher.final
   end
 

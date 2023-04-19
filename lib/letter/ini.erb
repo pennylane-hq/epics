@@ -4,14 +4,25 @@
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <meta charset="UTF-8" />
     <title>EBICS ini</title>
+    <style>
+      code {
+        font-size: 0.6rem;
+        overflow-wrap: break-word;
+      }
+      .code {
+        border-style: dotted;
+        padding: 8px;
+        background-color: azure;
+      }
+    </style>
   </head>
   <body>
     <div>
-      <h2>EBICS-Initialisierungsbrief (INI)</h2>
+      <h2>Lettre d'initialization du certificat de SIGNATURE (INI)</h2>
       <table>
         <tr>
           <td>
-            Datum
+            Date
           </td>
           <td>
             <%= Date.today.strftime("%d.%m.%Y") %>
@@ -19,7 +30,7 @@
         </tr>
         <tr>
           <td>
-            Uhrzeit
+            Heure
           </td>
           <td>
             <%= Time.now.strftime("%H:%M:%S") %>
@@ -27,7 +38,7 @@
         </tr>
         <tr>
           <td>
-            Empfänger
+            Nom
           </td>
           <td>
             <%= bankname %>
@@ -43,23 +54,22 @@
         </tr>
         <tr>
           <td>
-            Kunden-ID
+            Partner-ID
           </td>
           <td>
             <%= partner_id %>
           </td>
         </tr>
       </table>
-      <p>Öffentlicher Schlüssel für die elektronische Unterschrift (A006)</p>
-      <p>Exponent (<%= a.key.e.num_bytes * 8 %> Bit):</p>
-      <p><code><%= a.e %></code></p>
-      <p>Modulus (<%= a.key.n.num_bytes * 8 %> Bit):</p>
-      <p><code><%= a.n.scan(/.{2}/).join(" ") %></code></p>
+      <p>Type de certificat : A006</p>
+      <p>Certificat :</p>
+      <p class="code">
+      <code><%= keys_certs['A006'].to_s %></code>
+      </p>
       <p>Hash (SHA-256):</p>
-      <p>
+      <p class="code">
       <code><%= Base64.decode64(a.public_digest).unpack("H*").join.upcase.scan(/.{2}/).join(" ") %></code>
       </p>
-      <p>Ich bestätige hiermit den obigen öffentlichen Schlüssel für meine elektronische Unterschrift.</p>
       <br/>
       <br/>
       <br/>
@@ -67,34 +77,34 @@
       <table>
         <tr>
           <td>
-            _________________________
+            Date
           </td>
           <td>
-            _________________________
+            Nom
           </td>
           <td>
-            _________________________
+            Signature
           </td>
         </tr>
         <tr>
-          <td>
-            Ort/Datum
+          <td style="width: 100px;">
+            <%= Date.today.strftime("%d.%m.%Y") %>
+          </td>
+          <td style="width: 100px;">
+            <%= bankname %>
           </td>
           <td>
-            Name/Firma
-          </td>
-          <td>
-            Unterschrift
+            __________________________________________________
           </td>
         </tr>
       </table>
     </div>
     <div style="page-break-after:always"></div>
-    <h2>EBICS-Initialisierungsbrief (HIA) - Seite 1/2</h2>
+    <h2>Lettre d'initialization du certificat d'AUTHENTIFICATION (HIA)</h2>
     <table>
       <tr>
         <td>
-          Datum
+          Date
         </td>
         <td>
           <%= Date.today.strftime("%d.%m.%Y") %>
@@ -102,7 +112,7 @@
       </tr>
       <tr>
         <td>
-          Uhrzeit
+          Heure
         </td>
         <td>
           <%= Time.now.strftime("%H:%M:%S") %>
@@ -110,7 +120,7 @@
       </tr>
       <tr>
         <td>
-          Empfänger
+          Nom
         </td>
         <td>
           <%= bankname %>
@@ -126,7 +136,7 @@
       </tr>
       <tr>
         <td>
-          Kunden-ID
+          Partner-ID
         </td>
         <td>
           <%= partner_id %>
@@ -134,22 +144,50 @@
       </tr>
     </table>
     <div>
-      <p>Öffentlicher Authentifikationsschlüssel (X002)</p>
-      <p>Exponent (<%= x.key.e.num_bytes * 8 %> Bit):</p>
-      <p><code><%= x.e %></code></p>
-      <p>Modulus (<%= x.key.n.num_bytes * 8 %> Bit):</p>
-      <p><code><%= x.n.scan(/.{2}/).join(" ") %></code></p>
+      <p>Type de certificat : X002</p>
+      <p>Certificat :</p>
+      <p class="code">
+      <code><%= keys_certs['X002'].to_s %></code>
+      </p>
       <p>Hash (SHA-256):</p>
-      <p>
+      <p class="code">
       <code><%= Base64.decode64(x.public_digest).unpack("H*").join.upcase.scan(/.{2}/).join(" ") %></code>
       </p>
-      <p> Fortsetzung auf Seite 2 ...</p>
-      <div style="page-break-after:always"></div>
-      <h2>EBICS-Initialisierungsbrief (HIA) - Seite 2/2</h2>
+      <br/>
+      <br/>
+      <br/>
+      <br/>
       <table>
         <tr>
           <td>
-            Datum
+            Date
+          </td>
+          <td>
+            Nom
+          </td>
+          <td>
+            Signature
+          </td>
+        </tr>
+        <tr>
+          <td style="width: 100px;">
+            <%= Date.today.strftime("%d.%m.%Y") %>
+          </td>
+          <td style="width: 100px;">
+            <%= bankname %>
+          </td>
+          <td>
+            __________________________________________________
+          </td>
+        </tr>
+      </table>
+      </table>
+      <div style="page-break-after:always"></div>
+      <h2>Lettre d'initialization du certificat de CHIFFREMENT (HIA)</h2>
+      <table>
+        <tr>
+          <td>
+            Date
           </td>
           <td>
             <%= Date.today.strftime("%d.%m.%Y") %>
@@ -157,7 +195,7 @@
         </tr>
         <tr>
           <td>
-            Uhrzeit
+            Heure
           </td>
           <td>
             <%= Time.now.strftime("%H:%M:%S") %>
@@ -165,7 +203,7 @@
         </tr>
         <tr>
           <td>
-            Empfänger
+            Nom
           </td>
           <td>
             <%= bankname %>
@@ -181,7 +219,7 @@
         </tr>
         <tr>
           <td>
-            Kunden-ID
+            Partner-ID
           </td>
           <td>
             <%= partner_id %>
@@ -190,14 +228,16 @@
       </table>
     </div>
     <div>
-      <p>Öffentlicher Verschlüsselungsschlüssel (E002)</p>
-      <p>Exponent (<%= e.key.e.num_bytes * 8 %> Bit):</p>
-      <p><code><%= e.e %></code></p>
-      <p>Modulus (<%= e.key.n.num_bytes * 8 %> Bit):</p>
-      <p><code><%= e.n.scan(/.{2}/).join(" ") %></code></p>
+      <p>Type de certificat : E002</p>
+      <p>Certificat :</p>
+      <p class="code">
+      <code><%= keys_certs['E002'].to_s %></code>
+      <p>
       <p>Hash (SHA-256):</p>
-      <p><code><%= Base64.decode64(e.public_digest).unpack("H*").join.upcase.scan(/.{2}/).join(" ") %></code></p>
-      <p>Ich bestätige hiermit die obigen öffentlichen Schlüssel für meinen EBICS-Zugang.</p>
+      </p>
+      <p class="code">
+      <code><%= Base64.decode64(e.public_digest).unpack("H*").join.upcase.scan(/.{2}/).join(" ") %></code>
+      </p>
       <br/>
       <br/>
       <br/>
@@ -205,26 +245,27 @@
       <table>
         <tr>
           <td>
-            _________________________
+            Date
           </td>
           <td>
-            _________________________
+            Nom
           </td>
           <td>
-            _________________________
+            Signature
           </td>
         </tr>
         <tr>
-          <td>
-            Ort/Datum
+          <td style="width: 100px;">
+            <%= Date.today.strftime("%d.%m.%Y") %>
+          </td>
+          <td style="width: 100px;">
+            <%= bankname %>
           </td>
           <td>
-            Name/Firma
-          </td>
-          <td>
-            Unterschrift
+            __________________________________________________
           </td>
         </tr>
+      </table>
       </table>
     </div>
   </body>
