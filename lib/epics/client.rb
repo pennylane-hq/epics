@@ -339,6 +339,10 @@ class Epics::Client
     cert = OpenSSL::X509::Certificate.new(x_509_certificate_e_content)
     Digest::SHA256.hexdigest(cert.to_der).upcase
   end
+  
+  def HCS
+    post(url, Epics::HCS.new(self).to_xml).body.ok?
+  end
 
   private
 

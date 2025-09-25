@@ -33,7 +33,7 @@ class Epics::HIA < Epics::GenericRequest
             xml.send('ds:X509Data') do
               xml.send('ds:X509IssuerSerial') do
                 xml.send('ds:X509IssuerName', x_509_certificate_x.issuer )
-                xml.send('ds:X509SerialNumber', x_509_certificate_x.version)
+                xml.send('ds:X509SerialNumber', x_509_certificate_x.serial)
               end
               xml.send('ds:X509Certificate', x_509_certificate_x.data)
             end
@@ -51,7 +51,7 @@ class Epics::HIA < Epics::GenericRequest
             xml.send('ds:X509Data') do
               xml.send('ds:X509IssuerSerial') do
                 xml.send('ds:X509IssuerName', x_509_certificate_e.issuer )
-                xml.send('ds:X509SerialNumber', x_509_certificate_e.version)
+                xml.send('ds:X509SerialNumber', x_509_certificate_e.serial)
               end
               xml.send('ds:X509Certificate', x_509_certificate_e.data)
             end
