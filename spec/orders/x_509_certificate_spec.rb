@@ -11,9 +11,9 @@ RSpec.describe Epics::X509Certificate do
     end
   end
   
-  describe '#version' do
+  describe '#serial' do
     it 'returns the version of the certificate' do
-      expect(x_509_certificate.version).to eq(2)
+      expect(x_509_certificate.serial).to eq(1)
     end
   end
   

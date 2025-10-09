@@ -45,7 +45,7 @@ RSpec.describe Epics::HIA do
         x_crt = Epics::X509Certificate.new(client.x_509_certificate_x_content)
         e_crt = Epics::X509Certificate.new(client.x_509_certificate_e_content)
         expect(subject.order_data).to include('<ds:X509IssuerName>/C=GB/O=TestOrg/CN=test.example.org</ds:X509IssuerName>')
-        expect(subject.order_data).to include('<ds:X509SerialNumber>2</ds:X509SerialNumber>')
+        expect(subject.order_data).to include("<ds:X509SerialNumber>#{x_crt.serial}</ds:X509SerialNumber>")
         expect(subject.order_data).to include("<ds:X509Certificate>#{x_crt.data}</ds:X509Certificate>")
         expect(subject.order_data).to include("<ds:X509Certificate>#{e_crt.data}</ds:X509Certificate>")
       end

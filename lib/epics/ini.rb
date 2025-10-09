@@ -32,7 +32,7 @@ class Epics::INI < Epics::GenericRequest
             xml.send('ds:X509Data') do
               xml.send('ds:X509IssuerSerial') do
                 xml.send('ds:X509IssuerName', x_509_certificate_a.issuer )
-                xml.send('ds:X509SerialNumber', x_509_certificate_a.version)
+                xml.send('ds:X509SerialNumber', x_509_certificate_a.serial)
               end
               xml.send('ds:X509Certificate', x_509_certificate_a.data)
             end

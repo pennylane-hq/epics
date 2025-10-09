@@ -45,7 +45,7 @@ RSpec.describe Epics::INI do
       it 'includes x509 certificate' do
         a_crt = Epics::X509Certificate.new(client.x_509_certificate_a_content)
         expect(subject.key_signature).to include('<ds:X509IssuerName>/C=GB/O=TestOrg/CN=test.example.org</ds:X509IssuerName>')
-        expect(subject.key_signature).to include('<ds:X509SerialNumber>2</ds:X509SerialNumber>')
+        expect(subject.key_signature).to include("<ds:X509SerialNumber>#{a_crt.serial}</ds:X509SerialNumber>")
         expect(subject.key_signature).to include("<ds:X509Certificate>#{a_crt.data}</ds:X509Certificate>")
       end
     end
