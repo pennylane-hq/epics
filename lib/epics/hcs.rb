@@ -78,7 +78,7 @@ class Epics::HCS < Epics::GenericUploadRequest
               xml.send('ds:Exponent', Base64.strict_encode64(client.a.key.e.to_s(2)))
             end
           end
-          xml.SignatureVersion 'A006'
+          xml.SignatureVersion client.signature_version
         end
         xml.PartnerID client.partner_id
         xml.UserID client.user_id

@@ -36,7 +36,7 @@ class Epics::GenericUploadRequest < Epics::GenericRequest
                             'xmlns:xsi' => 'http://www.w3.org/2001/XMLSchema-instance',
                             'xsi:schemaLocation' => 'http://www.ebics.org/S001 http://www.ebics.org/S001/ebics_signature.xsd') do
         xml.OrderSignatureData do
-          xml.SignatureVersion 'A006'
+          xml.SignatureVersion signature_version
           xml.SignatureValue signature_value
           xml.PartnerID partner_id
           xml.UserID user_id

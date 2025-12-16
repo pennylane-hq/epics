@@ -69,6 +69,7 @@ I18n.load_path += Dir[File.join(File.dirname(__FILE__), 'letter/locales', '*.yml
 module Epics
   DEFAULT_PRODUCT_NAME = 'EPICS - a ruby ebics kernel'
   DEFAULT_LOCALE = :de
+  DEFAULT_SIGNATURE_VERSION = 'A006'
 end
 
 Ebics = Epics
