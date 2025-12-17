@@ -44,7 +44,7 @@ class Epics::INI < Epics::GenericRequest
             }
             xml.TimeStamp timestamp
           }
-          xml.SignatureVersion 'A006'
+          xml.SignatureVersion signature_version
         }
         xml.PartnerID partner_id
         xml.UserID user_id

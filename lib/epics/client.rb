@@ -3,7 +3,7 @@ class Epics::Client
 
   attr_accessor :passphrase, :url, :host_id, :user_id, :partner_id, :keys, :keys_content, :locale, :product_name,
                 :x_509_certificate_a_content, :x_509_certificate_x_content, :x_509_certificate_e_content, :debug_mode,
-                :current_order_id
+                :current_order_id, :signature_version
   attr_writer :iban, :bic, :name
   attr_reader :keyring
   
@@ -26,6 +26,7 @@ class Epics::Client
     self.x_509_certificate_x_content = options[:x_509_certificate_x_content]
     self.x_509_certificate_e_content = options[:x_509_certificate_e_content]
     self.current_order_id = options[:order_id] || 466560
+    self.signature_version = options[:signature_version] || Epics::DEFAULT_SIGNATURE_VERSION
     @keyring = Epics::Keyring.new(options[:version] || Epics::Keyring::VERSION_25)
   end
 

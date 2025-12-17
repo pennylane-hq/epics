@@ -16,7 +16,7 @@ class Epics::GenericRequest
     Time.now.utc.iso8601
   end
 
-  def_delegators :client, :host_id, :user_id, :partner_id
+  def_delegators :client, :host_id, :user_id, :partner_id, :signature_version
 
   def root
     'ebicsRequest'
