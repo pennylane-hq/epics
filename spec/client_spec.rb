@@ -255,6 +255,25 @@ RSpec.describe Epics::Client do
     end
   end
 
+  describe '#FUL' do
+    let(:document) { File.read( File.join( File.dirname(__FILE__), 'fixtures', 'xml', 'cd1.xml') ) }
+
+    before do
+      stub_request(:post, 'https://194.180.18.30/ebicsweb/ebicsweb')
+        .with(body: %r{<FULOrderParams><FileFormat>pain.001.001.02.sct</FileFormat></FULOrderParams>.*<TransactionPhase>Initialisation</TransactionPhase>}m)
+        .to_return(status: 200, body:  File.read(File.join(File.dirname(__FILE__), 'fixtures', 'xml', 'ful_init_response.xml')))
+
+      stub_request(:post, 'https://194.180.18.30/ebicsweb/ebicsweb')
+        .with(body: %r{<TransactionPhase>Transfer</TransactionPhase>})
+        .to_return(status: 200, body: File.read(File.join(File.dirname(__FILE__), 'fixtures', 'xml', 'ful_transfer_response.xml')))
+    end
+
+    it 'it includes the file format in the request and returns the transaction_id' do
+      response = subject.FUL(document, 'pain.001.001.02.sct')
+      expect(response.first).to eq('TEST_TRANSACTION_ID')
+    end
+  end
+
   describe '#x_509_certificate_a' do
     subject(:x_509_certificate_a) { client.x_509_certificate_a }
 

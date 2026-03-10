@@ -12,7 +12,8 @@ class Epics::FUL < Epics::GenericUploadRequest
       order_type: 'FUL',
       order_attribute: 'DZHNN',
       custom_order_params: { FULOrderParams: ful_order_params },
-      mutable: { TransactionPhase: 'Initialisation' }
+      mutable: { TransactionPhase: 'Initialisation' },
+      num_segments: 1,
     )
   end
 end
