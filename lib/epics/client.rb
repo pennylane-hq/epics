@@ -215,8 +215,8 @@ class Epics::Client
     upload(Epics::XCT, document)
   end
 
-  def FUL(document)
-    upload(Epics::FUL, document)
+  def FUL(document, file_format = nil)
+    upload(Epics::FUL, document, file_format: file_format)
   end
 
   def STA(from = nil, to = nil)
@@ -347,8 +347,8 @@ class Epics::Client
 
   private
 
-  def upload(order_type, document)
-    order = order_type.new(self, document)
+  def upload(order_type, document, **options)
+    order = order_type.new(self, document, **options)
     res = post(url, order.to_xml).body
     order.transaction_id = res.transaction_id
 
