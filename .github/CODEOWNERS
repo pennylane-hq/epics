@@ -1,0 +1,6 @@
+# Reviews are required by
+#
+# - @pennylane-hq/transactions-hub as main usage of this gem is for transactions-hub,
+# maintained by this squad
+
+* @pennylane-hq/transactions-hub
