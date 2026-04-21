@@ -8,7 +8,11 @@ class Epics::Error < StandardError
 
   def initialize(code)
     @code = code
-    @error = self.class::ERRORS.fetch(code, {})
+    @error = self.class::ERRORS.fetch(code, nil) || fallback_errors.fetch(code, {})
+  end
+
+  def fallback_errors
+    {}
   end
 
   def symbol
@@ -177,6 +181,10 @@ class Epics::Error < StandardError
         "meaning" => "Case 1) File with order attribute \"DZHNN\" or \"OZHNN\" submitted with an orderId or Case 2) File with order attribute \"UZHNN\" submitted without an orderId or with orderID which is already used for \"DZHNN\" File with order attribute \"DZHNN\" submitted with an orderId",
       }
     }
+
+    def fallback_errors
+      BusinessError::ERRORS
+    end
   end
 
   class BusinessError < self
@@ -335,6 +343,10 @@ class Epics::Error < StandardError
         "short_text" => "The signatory has already signed the order on hand."
       }
     }
+
+    def fallback_errors
+      TechnicalError::ERRORS
+    end
   end
 
 end
