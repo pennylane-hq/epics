@@ -3,8 +3,7 @@
 /Gemfile.lock
 /_yardoc/
 /coverage/
-/doc/*
-!/doc/dependency_decisions.yml
+/doc/
 /pkg/
 /spec/reports/
 /tmp/
