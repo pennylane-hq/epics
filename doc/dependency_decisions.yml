@@ -1,0 +1,43 @@
+---
+- - :permit
+  - MIT
+  - :who:
+    :why:
+    :versions: []
+    :when: 2026-04-21 13:20:17.703133000 Z
+- - :permit
+  - Apache 2.0
+  - :who:
+    :why:
+    :versions: []
+    :when: 2026-04-21 13:20:18.289675000 Z
+- - :permit
+  - Simplified BSD
+  - :who:
+    :why:
+    :versions: []
+    :when: 2026-04-21 13:20:18.781465000 Z
+- - :permit
+  - ruby
+  - :who:
+    :why:
+    :versions: []
+    :when: 2026-04-21 13:20:19.285982000 Z
+- - :permit
+  - LGPL
+  - :who:
+    :why:
+    :versions: []
+    :when: 2026-04-21 13:20:19.815137000 Z
+- - :permit
+  - Artistic-1.0-Perl
+  - :who:
+    :why:
+    :versions: []
+    :when: 2026-04-21 13:20:20.331016000 Z
+- - :permit
+  - GPL-2.0-or-later
+  - :who:
+    :why:
+    :versions: []
+    :when: 2026-04-21 13:20:20.809597000 Z
