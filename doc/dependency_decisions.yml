@@ -23,9 +23,9 @@
     :why:
     :versions: []
     :when: 2026-05-07 08:48:04.629903000 Z
-- - :permit
-  - LGPL
-  - :who:
-    :why:
-    :versions: []
-    :when: 2026-05-07 08:48:35.357986000 Z
+- - :approve
+  - epics
+  - :why: >
+      This is LGPL-2.1, a weak copyleft license that we can use as long as we
+      comply with some requirements available here:
+      https://pennylane-org.slack.com/archives/C04HEQLHDTQ/p1741249208399559
