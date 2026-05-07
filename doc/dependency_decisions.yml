@@ -1,0 +1,31 @@
+---
+- - :permit
+  - Simplified BSD
+  - :who:
+    :why:
+    :versions: []
+    :when: 2026-05-07 08:46:22.982184000 Z
+- - :permit
+  - ruby
+  - :who:
+    :why:
+    :versions: []
+    :when: 2026-05-07 08:46:30.129551000 Z
+- - :permit
+  - MIT
+  - :who:
+    :why:
+    :versions: []
+    :when: 2026-05-07 08:46:37.221213000 Z
+- - :permit
+  - Apache 2.0
+  - :who:
+    :why:
+    :versions: []
+    :when: 2026-05-07 08:48:04.629903000 Z
+- - :approve
+  - epics
+  - :why: >
+      This is LGPL-2.1, a weak copyleft license that we can use as long as we
+      comply with some requirements available here:
+      https://pennylane-org.slack.com/archives/C04HEQLHDTQ/p1741249208399559
